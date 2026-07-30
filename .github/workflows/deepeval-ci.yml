@@ -1,0 +1,35 @@
+name: DeepEval Legal RAG Suite
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Install dependencies
+        run: uv sync --extra openai
+
+      - name: Run DeepEval test suite
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CONFIDENT_API_KEY: ${{ secrets.CONFIDENT_API_KEY }}
+        run: uv run deepeval test run tests/
+
+  # Notes for the portfolio write-up:
+  # - Failing metrics fail this job, so a regression in Faithfulness or
+  #   Legal Precision blocks the PR instead of shipping silently.
+  # - CONFIDENT_API_KEY is optional: without it, results stay local;
+  #   with it, every run is stored/inspectable on Confident AI.

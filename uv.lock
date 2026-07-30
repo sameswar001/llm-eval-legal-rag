@@ -457,10 +457,11 @@ wheels = [
 [[package]]
 name = "llm-eval-legal-rag"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "deepeval" },
     { name = "numpy" },
+    { name = "pytest" },
     { name = "python-dotenv" },
     { name = "scikit-learn" },
 ]
@@ -479,6 +480,7 @@ requires-dist = [
     { name = "deepeval", specifier = ">=4.1.4" },
     { name = "numpy", specifier = ">=2.5.1" },
     { name = "openai", marker = "extra == 'openai'", specifier = ">=1.30.0" },
+    { name = "pytest", specifier = ">=9.1.1" },
     { name = "python-dotenv", specifier = ">=1.2.2" },
     { name = "scikit-learn", specifier = ">=1.9.0" },
 ]

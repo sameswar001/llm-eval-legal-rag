@@ -1,0 +1,21 @@
+MUTUAL NON-DISCLOSURE AGREEMENT
+
+This Mutual Non-Disclosure Agreement ("Agreement") is entered into as of March 12, 2025 ("Effective Date"), by and between Northwind Textiles Pvt Ltd, a company incorporated in India ("Northwind"), and Solara Analytics AB, a company incorporated in Sweden ("Solara"), each a "Party" and together the "Parties."
+
+1. Purpose. The Parties wish to explore a potential business relationship concerning supply-chain data analytics ("Purpose") and, in connection with the Purpose, may disclose certain confidential and proprietary information to each other.
+
+2. Confidential Information. "Confidential Information" means any technical, financial, or business information disclosed by one Party to the other, whether orally or in writing, that is designated as confidential or that a reasonable person would understand to be confidential given the nature of the information.
+
+3. Exclusions. Confidential Information does not include information that: (a) is or becomes publicly available through no fault of the receiving Party; (b) was rightfully known to the receiving Party prior to disclosure; (c) is independently developed without use of the disclosing Party's Confidential Information; or (d) is rightfully obtained from a third party without restriction.
+
+4. Obligations. Each Party agrees to: (a) use the other Party's Confidential Information solely for the Purpose; (b) protect the Confidential Information using at least the same degree of care it uses for its own confidential information, and no less than reasonable care; and (c) not disclose the Confidential Information to any third party without the prior written consent of the disclosing Party, except to employees and advisors with a need to know who are bound by confidentiality obligations at least as protective as this Agreement.
+
+5. Term. This Agreement shall remain in effect for three (3) years from the Effective Date, unless earlier terminated by either Party upon thirty (30) days' written notice. The confidentiality obligations under Section 4 shall survive termination for a period of five (5) years.
+
+6. Remedies. Each Party acknowledges that unauthorized disclosure of Confidential Information may cause irreparable harm for which monetary damages would be an inadequate remedy, and that the non-breaching Party shall be entitled to seek injunctive relief in addition to any other remedies available at law or equity.
+
+7. Governing Law. This Agreement shall be governed by and construed in accordance with the laws of Sweden, without regard to its conflict of laws principles. Any dispute arising under this Agreement shall be subject to the exclusive jurisdiction of the courts of Stockholm, Sweden.
+
+8. No License. Nothing in this Agreement shall be construed as granting any rights, by license or otherwise, to any Confidential Information disclosed under this Agreement, except as expressly set forth herein.
+
+IN WITNESS WHEREOF, the Parties have executed this Agreement as of the Effective Date.

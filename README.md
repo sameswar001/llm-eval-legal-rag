@@ -4,7 +4,7 @@ A DeepEval evaluation suite built around a small legal contract Q&A RAG pipeline
 
 ## Why this project
 
-Most QA portfolios show Selenium/Playwright suites. This one shows the emerging skill: **treating an LLM system as something with a measurable, gate-able definition of "correct,"** the same way a functional test suite gates a build. It's built to back a Head of Testing / QE Lead application where GenAI evaluation is a stated requirement.
+Most QA portfolios show Selenium/Playwright suites. This one shows the emerging skill: **treating an LLM system as something with a measurable, gate-able definition of "correct,"** the same way a functional test suite gates a build.
 
 ## Architecture
 
@@ -45,7 +45,6 @@ llm-eval-legal-rag/
 │   └── test_adversarial.py
 └── .github/workflows/       ← CI gate
 ```
-*(README.md, .gitignore, and init_git_history.sh also live at the root — omitted above since they're housekeeping, not part of the system or the suite.)*
 
 **Components:**
 

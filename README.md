@@ -4,18 +4,53 @@ A DeepEval evaluation suite built around a small legal contract Q&A RAG pipeline
 
 ## Why this project
 
-Most QA portfolios show Selenium/Playwright suites. This one shows the emerging skill: **treating an LLM system as something with a measurable, gate-able definition of "correct,"** the same way a functional test suite gates a build. 
+Most QA portfolios show Selenium/Playwright suites. This one shows the emerging skill: **treating an LLM system as something with a measurable, gate-able definition of "correct,"** the same way a functional test suite gates a build. It's built to back a Head of Testing / QE Lead application where GenAI evaluation is a stated requirement.
 
 ## Architecture
 
+**Data flow** — a query passes through retrieval, then generation, then gets scored:
+
 ```
-Query → TfidfRetriever (data/contracts/*.txt) → LLMGenerator (swappable) → Answer
-                                                        ↓
-                                      DeepEval test suite scores the (query, context, answer) triple
+  Query
+    │
+    ▼
+  TfidfRetriever   ──▶  retrieves top-k chunks from data/contracts/*.txt
+    │  (context)
+    ▼
+  LLMGenerator     ──▶  swappable backend: OpenAI / Anthropic / DeepSeek / Mock
+    │  (answer)
+    ▼
+  Answer
+    │
+    ▼
+  DeepEval scores the (query, context, answer) triple
 ```
 
+**Project structure:**
+
+```
+llm-eval-legal-rag/
+├── pyproject.toml          ← dependency manifest (uv reads this)
+├── .env.example
+├── data/contracts/         ← fixtures: the "system's" knowledge base
+├── src/legal_rag/          ← the system under test
+│   ├── retriever.py
+│   ├── generator.py
+│   └── pipeline.py
+├── tests/                  ← the eval suite (this is the actual deliverable)
+│   ├── goldens/             ← input questions + expected answers
+│   ├── metrics/             ← custom scoring logic, reusable across tests
+│   ├── test_rag_e2e.py
+│   ├── test_legal_precision.py
+│   └── test_adversarial.py
+└── .github/workflows/       ← CI gate
+```
+*(README.md, .gitignore, and init_git_history.sh also live at the root — omitted above since they're housekeeping, not part of the system or the suite.)*
+
+**Components:**
+
 - **`src/legal_rag/retriever.py`** — TF-IDF retrieval over three sample contracts (NDA, MSA, commercial lease). Deliberately simple so a low Contextual Precision/Recall score points at the generator, not an opaque vector store.
-- **`src/legal_rag/generator.py`** — swappable generator interface (`OpenAIGenerator`, `AnthropicGenerator`, `MockGenerator` for offline wiring). Lets the same suite score different models against the same retriever.
+- **`src/legal_rag/generator.py`** — swappable generator interface (`OpenAIGenerator`, `AnthropicGenerator`, `DeepSeekGenerator`, `MockGenerator` for offline wiring). Lets the same suite score different models against the same retriever. `DeepSeekGenerator` reuses the `openai` SDK pointed at DeepSeek's OpenAI-compatible endpoint rather than a separate SDK.
 - **`src/legal_rag/pipeline.py`** — wires the two together; `LegalRAGPipeline.answer(query)` is the system under test.
 
 ## Evaluation suite
@@ -31,10 +66,12 @@ Generic metrics catch hallucination and off-topic answers. They don't specifical
 ## Setup
 
 ```bash
-uv sync --extra openai   # or --extra anthropic
-cp .env.example .env     # add OPENAI_API_KEY 
+uv sync --extra openai   # or --extra anthropic / --extra deepseek
+cp .env.example .env     # add OPENAI_API_KEY, ANTHROPIC_API_KEY, or DEEPSEEK_API_KEY
 deepeval login            # optional — enables Confident AI cloud storage
 ```
+
+Note: `--extra deepseek` and `--extra openai` resolve to the same `openai` package — DeepSeek's API is OpenAI-compatible, so no separate SDK exists. The judge model DeepEval itself uses for scoring (`FaithfulnessMetric`, `GEval`, etc.) is configured separately and still defaults to OpenAI; see [DeepEval's model docs](https://deepeval.com/docs/metrics-introduction) if you want to swap that too.
 
 ## Running the suite
 
@@ -61,4 +98,4 @@ uv run deepeval inspect                       # trace-tree view of the last run
 ## Notes
 
 - Sample contracts in `data/contracts/` are original, fictional text written for this project — not real agreements.
-- `MockGenerator` exists purely so the pipeline runs offline for wiring/demo purposes. Real evaluation runs need a real generator (`OpenAIGenerator` / `AnthropicGenerator`).
+- `MockGenerator` exists purely so the pipeline runs offline for wiring/demo purposes. Real evaluation runs need a real generator (`OpenAIGenerator`).

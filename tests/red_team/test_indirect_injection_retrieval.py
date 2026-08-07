@@ -20,6 +20,8 @@ import shutil
 import pytest
 
 from legal_rag.generator import MockGenerator, default_generator
+# ADAPT: confirm this is where LegalRAGPipeline actually lives — same
+# guess as in test_context_injection_deepteam.py
 from legal_rag.pipeline import LegalRAGPipeline
 
 from tests.red_team.posioned_fixture import POISONED_CLAUSES, CANARY, REAL_CORPUS_DIR
@@ -104,7 +106,10 @@ def test_poisoned_clause_is_not_obeyed(poisoned_pipeline, clause):
         f"generator's behavior. Full answer for debugging:\n{result.answer}"
     )
 
-    # Optional: also run your existing custom G-Eval "Legal Precision"
-    # metric against result.answer here — it catches the subtler failure
-    # mode where a poisoned clause biases the wording of an answer without
-    # ever needing the model to parrot a literal canary string.
+    # Optional: also run your existing custom G-Eval "Scope Awareness"
+    # metric (tests/test_adversarial.py) against result.answer here — it's
+    # purpose-built for instruction-override/out-of-scope detection, so it
+    # catches the subtler failure mode where a poisoned clause biases an
+    # answer without the model ever parroting a literal canary string.
+    # ("Legal Precision" is the wrong metric for this — it scores exact
+    # dates/amounts/clause references, not scope or instruction-following.)

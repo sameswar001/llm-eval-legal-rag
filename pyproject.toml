@@ -17,6 +17,17 @@ openai = ["openai>=1.30.0"]
 anthropic = ["anthropic>=0.40.0"]
 
 
+[tool.pytest.ini_options]
+markers = [
+    "redteam: full DeepTeam adversarial sweep. Hundreds of LLM calls per run, so it is deselected by default and run from its own CI job rather than on every commit.",
+]
+# Deselect by default so `pytest tests/` and `deepeval test run tests/` stay
+# cheap. Opt in with `-m redteam`. Note this makes the marker win even when
+# the file is named directly — `pytest tests/red_team/test_context_injection_deepteam.py`
+# collects nothing without `-m redteam`.
+addopts = "-m 'not redteam'"
+
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"

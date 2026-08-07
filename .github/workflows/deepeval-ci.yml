@@ -2,6 +2,11 @@ name: DeepEval Legal RAG Suite
 
 on:
   workflow_dispatch:
+    inputs:
+      run_red_team:
+        description: "Also run the DeepTeam adversarial sweep (slow, spends tokens)"
+        type: boolean
+        default: false
 
 
 jobs:
@@ -22,14 +27,61 @@ jobs:
       - name: Install dependencies
         run: uv sync --extra openai
 
+      # The `redteam` marker is deselected by pyproject's addopts, so the
+      # full adversarial sweep does NOT run here. See the red-team job below.
       - name: Run DeepEval test suite
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           CONFIDENT_API_KEY: ${{ secrets.CONFIDENT_API_KEY }}
         run: uv run deepeval test run tests/
 
+  red-team:
+    # Separate job, and opt-in: the DeepTeam sweep is ~150 attack
+    # simulations, each costing several LLM calls. Too slow and too
+    # expensive to attach to the evaluate job, and its results are
+    # triaged rather than watched.
+    if: inputs.run_red_team
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v9.0.0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.14"
+
+      - name: Install dependencies
+        run: uv sync --extra openai
+
+      - name: Run DeepTeam red-team sweep
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CONFIDENT_API_KEY: ${{ secrets.CONFIDENT_API_KEY }}
+          # Turns the "no real generator configured" skip into a failure.
+          # A red-team job that reports green having tested nothing is
+          # worse than one that fails loudly.
+          RED_TEAM_REQUIRE_LIVE: "1"
+          RED_TEAM_REPORT_DIR: redteam-reports
+        run: uv run pytest tests/ -m redteam -v
+
+      - name: Upload risk assessment
+        # The failing run is the one worth reading, so upload either way.
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: redteam-risk-assessment
+          path: redteam-reports/
+          if-no-files-found: warn
+
   # Notes for the portfolio write-up:
   # - Failing metrics fail this job, so a regression in Faithfulness or
   #   Legal Precision blocks the PR instead of shipping silently.
   # - CONFIDENT_API_KEY is optional: without it, results stay local;
   #   with it, every run is stored/inspectable on Confident AI.
+  # - The red-team sweep is split out deliberately: it answers "can this be
+  #   made to misbehave", which is a periodic security question, not a
+  #   per-commit regression gate like Faithfulness.

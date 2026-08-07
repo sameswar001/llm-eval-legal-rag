@@ -6,3 +6,5 @@ __pycache__/
 .deepeval-cache.json
 *.egg-info/
 .pytest_cache/
+.redteam/
+redteam-reports/

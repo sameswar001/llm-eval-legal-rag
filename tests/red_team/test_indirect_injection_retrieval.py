@@ -20,11 +20,9 @@ import shutil
 import pytest
 
 from legal_rag.generator import MockGenerator, default_generator
-# ADAPT: confirm this is where LegalRAGPipeline actually lives — same
-# guess as in test_context_injection_deepteam.py
 from legal_rag.pipeline import LegalRAGPipeline
 
-from tests.red_team.posioned_fixture import POISONED_CLAUSES, CANARY, REAL_CORPUS_DIR
+from tests.red_team.poisoned_fixture import POISONED_CLAUSES, CANARY, REAL_CORPUS_DIR
 
 
 @pytest.fixture(scope="module")
